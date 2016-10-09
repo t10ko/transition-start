@@ -1,0 +1,30 @@
+{
+  "name": "transitionstart-event",
+  "description": "transitionstart event for JavaScript.",
+  "main": "src/main.js",
+  "authors": [
+    "Tigran Atayan"
+  ],
+  "license": "GPL-3.0",
+  "keywords": [
+    "JavaScript",
+    "transitions",
+    "transition",
+    "event",
+    "transitionstart",
+    "transitionend",
+    "CSS",
+    "animations"
+  ],
+  "dependencies": {
+    "hooking-api": ">=1.1.2"
+  },
+  "homepage": "https://github.com/t10ko/transitionstart-event",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
