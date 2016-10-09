@@ -23,8 +23,6 @@ document.querySelector( '#target' ).addEventListener( 'transitionstart', functio
 Third argument is the property list for which you need to track transition changes.  
 Did this to prevent performance issues.
 
-[Demo](http://jsfiddle.net/)
-
 ## Differences.
 
 Plugin will work a little different in case when animation and transition are running together on the same properties.  
