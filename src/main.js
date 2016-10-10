@@ -821,10 +821,7 @@
 					delays = originals[ 'transition-delay' ], 
 
 					properties_parsed = _(), 
-					new_properties = '', 
-					new_durations = '', 
-					new_easings = '', 
-					new_delays = '', 
+					new_transition = '', 
 
 					removed_properties = false, 
 
@@ -862,20 +859,11 @@
 						i += translateds.length;
 						continue;
 					}
-
-					new_properties = property + ', ' + new_properties;
-					new_easings = easings[ ind ] + ', ' + new_easings;
-					new_durations = orig_duration + ', ' + new_durations;
-					new_delays = orig_delay + ', ' + new_delays;
+					new_transition = property + ' ' + orig_duration + ' ' + easings[ ind ] + ' ' + orig_delay + ', ';
 				}
 
 				//	If no property was deleted from transition, dont change anything.
-				return removed_properties && ( IsObjectEmpty( properties_parsed ) && { transition: 'none' } || {
-					'transition-property': new_properties.slice( 0, -2 ), 
-					'transition-duration': new_durations.slice( 0, -2 ), 
-					'transition-timing-function': new_easings.slice( 0, -2 ), 
-					'transition-delay': new_delays.slice( 0, -2 )
-				} );
+				return removed_properties && (IsObjectEmpty( properties_parsed ) ? 'none' : new_transition.slice( 0, -2 ));
 			};
 		} ) ();
 
@@ -899,7 +887,7 @@
 				self.ignoreMutations.start( target );
 
 				//	Changing transition value to the one with disabled needed properties.
-				CSS.set( target, changed_transition );
+				CSS.set( target, { transition: changed_transition } );
 
 				//	First HACK!
 				//	If value of this property has been changed, 
