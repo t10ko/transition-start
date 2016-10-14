@@ -235,6 +235,7 @@
 	/**
 	 * CSS styles manipulation API.
 	 */
+	var GetEvent;
 	var CSS = ( function () {
 		var self = {};
 
@@ -307,7 +308,7 @@
 			function TrySetValue( check_support, name, value, tagname ) {
 				var node = test_elements[ tagname = tagname || '_' ] || ( test_elements[ tagname ] = document.createElement( tagname ) ),
 					styles = node.style, 
-					name = name = Translate( name ) && ( name in node.style ) && name;
+					name = name = Translate( name ) && HasOwn( styles, name ) && name;
 
 				//	This element is not supporting this property
 				if( !name )
@@ -432,6 +433,24 @@
 					Translate.add( original, VendorPrefixes.make( original, 'CSS' ) );
 				}
 			}
+			GetEvent = ( function () {
+				var example = document.createElement( '_' ), 
+					styles = example.style, 
+					events = { transition: [ 'End' ], animation: [ 'Start', 'Iteration', 'End' ] }, 
+					translations = _();
+				function Checker( property ) { return HasOwn(styles, property); };
+				for( var name in events ) {
+					if( VendorPrefixes.try( name, 'css', Checker ) ) {
+						var postfixes = events[ name ], 
+							i = 0;
+						for( ; i < postifxes.length; i++ ) {
+							var postfix = postfixes[ i ];
+							translations[ name + postfix.toLowerCase() ] = VendorPrefixes.make( name + postfix, 'event' );
+						}
+					}
+				}
+				return function GetEvent( event ) { return translations[ event ] || event.toLowerCase(); };
+			} ) ();
 		} ) ( {
 			animations: {
 				name: 'animation-name', 
@@ -481,9 +500,7 @@
 				properties = [ properties ];
 
 			var result = [], 
-
 				styles = element.style, 
-
 				new_properties = [], 
 				i = properties.length;
 
@@ -530,7 +547,7 @@
 			is_api_ready = false, 
 			ignore_next = false, 
 			cached_calls = [], 
-			data_key = 'transitionStartEventHandlers';
+			data_key = 'transition-start-event-handlers';
 
 		var CheckEventName = ( function () {
 			var regex = /^[a-z]+$/i;
@@ -633,10 +650,10 @@
 		};
 		return self;
 	} ) ();
-	function GetEventName( event ) { return VendorPrefixes.current && VendorPrefixes.make( event, 'event' ) || event.toLowerCase(); };
+
 	var CSSPseudoClassEvents = ( function () {
 		var self = {}, 
-			data_key = 'transitionStartCSSPseudoClassHasEventHandler', 
+			data_key = 'transition-start-css-pseudo-class-has-event-handler', 
 			current_event_object = null, 
 
 			//	Pseudoclass events.
@@ -739,7 +756,7 @@
 			//	Done this, because this works even if event handlers call stopPropagation.
 			//	transitionend event is needed on window to know where transition ends for properties.
 			//	animationend event is needed to again try to catch transitionstart event because transition can't run during animation.
-			[ GetEventName('transitionEnd'), GetEventName('animationEnd'), 'mouseup', 'mousedown' ].forEach( function ( event, i ) {
+			[ GetEvent('transitionend'), GetEvent('animationend'), 'mouseup', 'mousedown' ].forEach( function ( event, i ) {
 				var is_transitionend = !i;
 				window.addEventListener( event, global_events[ event ] = function ( event ) {
 					if( current_event_object !== event ) {
@@ -774,7 +791,7 @@
 
 	var TransitionStart = ( function () {
 		var self = {}, 
-			data_key = 'transitionStartHandlerInfo';
+			data_key = 'transition-start-handler-info';
 
 		/**
 		 * This method turns off transition of given properties.
@@ -1257,7 +1274,7 @@
 
 		//	Binding transitionend event on tester element.
 		//	Initialize all APIs here.
-		event_tester.addEventListener( GetEventName( 'transitionEnd' ), function () {
+		event_tester.addEventListener( GetEvent('transitionend'), function () {
 
 			//	Removing tester element from body.
 			Body.removeChild( event_tester );

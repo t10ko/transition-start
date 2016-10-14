@@ -17,6 +17,7 @@
     "animations"
   ],
   "dependencies": {
+    "vendor-prefixes": ">=1.0.0", 
     "hooking-api": ">=1.1.2"
   },
   "homepage": "https://github.com/t10ko/transitionstart-event",
