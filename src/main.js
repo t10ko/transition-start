@@ -195,7 +195,7 @@
 			return function() {
 				if( current )
 					current.disconnect();
-				current = new MutationObserver( function ( mutations ) {
+				current = new Natives.$.MutationObserver( function ( mutations ) {
 					if( first ) {
 						first.handler.apply( null, first.args );
 						first = null;
@@ -443,7 +443,7 @@
 					if( VendorPrefixes.try( name, 'css', Checker ) ) {
 						var postfixes = events[ name ], 
 							i = 0;
-						for( ; i < postifxes.length; i++ ) {
+						for( ; i < postfixes.length; i++ ) {
 							var postfix = postfixes[ i ];
 							translations[ name + postfix.toLowerCase() ] = VendorPrefixes.make( name + postfix, 'event' );
 						}
@@ -1051,7 +1051,7 @@
 		 * Binds MutationListener to mutation observer.
 		 */
 		function MakeObserver( element ) {
-			var observer = new MutationObserver( MutationListener );
+			var observer = new Natives.$.MutationObserver( MutationListener );
 			observer.observe( element, { attributes: true } );
 			return observer;
 		};
