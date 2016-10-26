@@ -18,7 +18,7 @@
   ],
   "dependencies": {
     "vendor-prefixes": ">=1.0.0", 
-    "hooking-api": ">=1.1.6"
+    "hooking-api": ">=1.1.7"
   },
   "homepage": "https://github.com/t10ko/transitionstart-event",
   "ignore": [

@@ -170,12 +170,6 @@
 
 	/**
 	 * Microtask immediates API based on MutationObservers.
-	 * @param  {Object} )          {		var       self [description]
-	 * @param  {[type]} current_id [description]
-	 * @param  {[type]} first      [description]
-	 * @param  {Object} stack      [description]
-	 * @param  {[type]} target     [description]
-	 * @return {[type]}            [description]
 	 */
 	var Immediates = ( function () {
 		var self = {}, 
