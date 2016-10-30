@@ -1,17 +1,51 @@
 ( function () {
+	if( !window.Natives ) {
+		console.error( 'This plugin depends on hooking-api, please include it.' );
+		return;
+	} else if( 
+		!window.VendorPrefixes || 
+		!window.Natives || 
+		!Object.defineProperty || 
+		!Object.create || 
+		!Natives.translate( 'TransitionEvent', { prefixType: 'JSClass' } ) || 
+		!Natives.translate( 'MutationObserver', { prefixType: 'JSClass' } ) 
+	) {
+		console.error( 'This browser cannot support transitionstart event.' );
+		return;
+	}
 
 	//	Preventing double installation.
 	if( window.transitionStartInstalled ) 
 		return;
 	Object.defineProperty( window, 'transitionStartInstalled', { value: true } );
 
-	if( !window.Natives ) {
-		console.error( 'This plugin depends on hooking-api, please include it.' );
-		return;
-	} else if( !Object.defineProperty || !Object.create || !window.TransitionEvent || !Natives.translate( 'MutationObserver', { prefixType: 'JSClass' } ) ) {
-		console.error( 'This browser cannot support transitionstart event.' );
-		return;
-	}
+	//	Fixing IE11 mutation observer bug.
+	//	See at: https://gist.github.com/t10ko/4aceb8c71681fdb275e33efe5e576b14
+	( function () {
+		var example = document.createElement( '_' ),
+		    observer = new MutationObserver( function () {} );
+		observer.observe( example, { attributes: true } );
+
+		//	Randomly changing style attribute using setProperty method.
+		example.style.setProperty( 'display', 'block' );
+
+		//	If no mutation record generated, than it's IE11 and it's a bug :)
+		if( !observer.takeRecords().length ) {
+			Natives.hook( 'CSSStyleDeclaration.prototype.setProperty', function ( original ) {
+				return function ( name, to_value ) {
+					var value = this.getPropertyValue( name ),
+						priority = this.getPropertyPriority( name ),
+						result = original.apply( this, arguments );
+
+					//	HACK!
+					//	If something modified after setProperty call, generate mutation by appending white space to cssText.
+					if( value != this.getPropertyValue( name ) || priority != this.getPropertyPriority( name ) ) 
+						this.cssText += ' ';
+					return result;
+				}
+			} );
+		}
+	} ) ();
 
 	//	This list is for handling transition: all
 	//	Got from here https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_animated_properties
