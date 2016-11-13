@@ -642,7 +642,7 @@
 				container = data[ capturing ? 'capturings' : 'bubblings' ], 
 				key = ObjectID( handler ), 
 				props_object = NativeSupport ? ObjectFillKeys( properties ) : TransitionStart.addProps( element, properties ), 
-				hooked = Natives.hookFunction( handler, Natives.DONT_FAKE, function ( original ) {
+				hooked = Natives.hook( handler, {fake: false}, function ( original ) {
 					return function ( event ) {
 						if( HasOwn( props_object, event.propertyName ) )
 							return original.apply( this, arguments );
